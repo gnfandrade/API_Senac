@@ -22,6 +22,8 @@ public class ProdutosRepositorio {
 		lst.add(p3);
 		lst.add(p4);
 		lst.add(p5);
+		
+		return lst;
 	}
 		
 	
