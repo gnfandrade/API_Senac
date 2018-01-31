@@ -1,5 +1,10 @@
 package br.com.primeiraapi.repositorio;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,17 +16,33 @@ public class ProdutosRepositorio {
 		List<Produtos> lst = new ArrayList<Produtos>();
 		
 		//Criando os produtos para serem aramzenados na lista
-		Produtos p1 = new Produtos(1,"Mouse","Mouse Microsoft","Informática",20.56);
-		Produtos p2 = new Produtos(2,"Teclado","Teclado sem Fio","Informática",25.00);
-		Produtos p3 = new Produtos(3,"Processador","Intel Core I7","Informática",450.45);
-		Produtos p4 = new Produtos(4,"Placa Mãe","Placa Mãe Asus","Informática",390.99);
-		Produtos p5 = new Produtos(5,"Cabo de Rede","CAT5 Furukawa","Telecomunicação",120.99);
+		Connection con = null;
+		PreparedStatement pst = null;
 		
-		lst.add(p1);
-		lst.add(p2);
-		lst.add(p3);
-		lst.add(p4);
-		lst.add(p5);
+		try {
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/loja","root","");
+			
+			String consulta = "select * from produtos";
+			
+			pst = con.prepareStatement(consulta);
+			
+			ResultSet rs = pst.executeQuery();
+			
+			while(rs.next()) {
+				Produtos pd = new Produtos(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDouble(5));
+				lst.add(pd);
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		return lst;
 	}
