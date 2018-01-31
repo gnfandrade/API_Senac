@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import br.com.primeiraapi.dominio.Produtos;
 import br.com.primeiraapi.repositorio.ProdutosRepositorio;
 
@@ -34,23 +36,15 @@ public class Exemplo extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		String saida = "{";
-		List<Produtos> produtos = pr.listarProdutos();
-		for(int i = 0; i < produtos.size(); i++) {
-			
-			saida += "{\n";
-			
-			saida += "\"id:\""+produtos.get(i).getIdProduto()+"\n";
-			saida += "\"nome:\""+produtos.get(i).getNomeProduto()+"\n";
-			saida += "\"descricao:\""+produtos.get(i).getDescricao()+"\n";
-			saida += "\"categoria:\""+produtos.get(i).getCategoria()+"\n";
-			saida += "\"preço:\""+produtos.get(i).getPreco()+"\n";
-			
-			saida += "},\n";
-		}
-		saida += "}";
+		List<Produtos> pd = pr.listarProdutos();
 		
+		//Instancia da classe Gson.
+		Gson gs = new Gson();
+		String saida = gs.toJson(pd);
+		
+		response.setContentType("UTF-8");
 		response.getWriter().print(saida);
+				
 		
 	}
 	
